@@ -2,42 +2,54 @@ import { useJogoFisica } from "@/contexts/jogoFisica";
 import { useEffect } from "react";
 import { StyleSheet } from "react-native";
 import Animated, {
-  measure,
   useAnimatedRef,
   useAnimatedStyle,
+  measure,
 } from "react-native-reanimated";
 
 const ALTURA_TIJOLO = 32;
+const PADDING_HORIZONTAL = 8;
+const MARGIN_BOTTOM = 4;
+const BRICKS_PER_ROW = 7;
 
 type TijoloProps = {
   indice: number;
 };
 
 export const Tijolo: React.FC<TijoloProps> = ({ indice }) => {
-  const { tijolos } = useJogoFisica();
+  const { tijolos, areaLargura } = useJogoFisica();
   const ref = useAnimatedRef<Animated.View>();
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       try {
-        const medida = measure(ref);
-        if (medida) {
+        // Calculate brick position based on grid layout
+        if (areaLargura.value > 0) {
+          const brickWidth = (areaLargura.value - PADDING_HORIZONTAL * 2) / BRICKS_PER_ROW;
+          const rowIndex = Math.floor(indice / BRICKS_PER_ROW);
+          const colIndex = indice % BRICKS_PER_ROW;
+
+          const x = PADDING_HORIZONTAL + colIndex * brickWidth;
+          const y = PADDING_HORIZONTAL + rowIndex * (ALTURA_TIJOLO + MARGIN_BOTTOM);
+
           const atual = tijolos.value;
           const copia = [...atual];
           copia[indice] = {
-            x: medida.x,
-            y: medida.y,
-            largura: medida.width,
-            altura: medida.height,
+            x,
+            y,
+            largura: brickWidth,
+            altura: ALTURA_TIJOLO,
             visivel: true,
           };
           tijolos.value = copia;
         }
-      } catch (e) {}
-    }, 200);
+      } catch (e) {
+        // Silent fail
+      }
+    }, 250);
 
     return () => clearTimeout(timeoutId);
-  }, [indice, tijolos]);
+  }, [indice, tijolos, areaLargura]);
 
   const estiloAnimado = useAnimatedStyle(() => ({
     opacity: tijolos.value[indice]?.visivel === false ? 0 : 1,
