@@ -1,32 +1,38 @@
 import { PADDLE_FACIL } from "@/constants/grade";
 import { useJogoFisica } from "@/contexts/jogoFisica";
 import { StyleSheet } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import Animated, { useAnimatedStyle } from "react-native-reanimated";
+import Animated, {
+  useAnimatedStyle,
+  useFrameCallback,
+} from "react-native-reanimated";
+
+const PADDLE_SPEED = 600;
 
 export const Paddle: React.FC = () => {
-  const { paddleX, areaLargura } = useJogoFisica();
+  const { paddleX, areaLargura, paddleMovement } = useJogoFisica();
 
-  const pan = Gesture.Pan()
-    .onChange((e) => {
-      "worklet";
-      const meiaLargura = PADDLE_FACIL.LARGURA / 2;
-      const novoX = paddleX.value + e.changeX;
+  useFrameCallback(() => {
+    "worklet";
+    const meiaLargura = PADDLE_FACIL.LARGURA / 2;
+    const dt = 1 / 60;
+    const distance = PADDLE_SPEED * dt;
+
+    if (paddleMovement.isMovingLeft.value) {
+      paddleX.value = Math.max(paddleX.value - distance, meiaLargura);
+    }
+    if (paddleMovement.isMovingRight.value) {
       paddleX.value = Math.min(
-        Math.max(novoX, meiaLargura),
-        areaLargura.value - meiaLargura
+        paddleX.value + distance,
+        areaLargura.value - meiaLargura,
       );
-    });
+    }
+  });
 
   const estiloAnimado = useAnimatedStyle(() => ({
     left: paddleX.value - PADDLE_FACIL.LARGURA / 2,
   }));
 
-  return (
-    <GestureDetector gesture={pan}>
-      <Animated.View style={[styles.container, estiloAnimado]} />
-    </GestureDetector>
-  );
+  return <Animated.View style={[styles.container, estiloAnimado]} />;
 };
 
 const styles = StyleSheet.create({

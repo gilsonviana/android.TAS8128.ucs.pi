@@ -5,7 +5,7 @@ export const PADDLE_FACIL = {
 
 export const BOLA_FACIL = {
   RAIO: 8,
-  VELOCIDADE_INICIAL: 280,
+  VELOCIDADE_INICIAL: 200,
 };
 
 export const GRADE_FACIL = {

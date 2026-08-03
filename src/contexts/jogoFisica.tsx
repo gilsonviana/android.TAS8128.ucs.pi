@@ -9,6 +9,11 @@ export type Tijolo = {
   visivel: boolean;
 };
 
+type PaddleMovement = {
+  isMovingLeft: SharedValue<boolean>;
+  isMovingRight: SharedValue<boolean>;
+};
+
 type JogoFisicaContexto = {
   bolaX: SharedValue<number>;
   bolaY: SharedValue<number>;
@@ -18,6 +23,7 @@ type JogoFisicaContexto = {
   areaLargura: SharedValue<number>;
   areaAltura: SharedValue<number>;
   tijolos: SharedValue<Tijolo[]>;
+  paddleMovement: PaddleMovement;
 };
 
 const JogoFisicaContext = createContext<JogoFisicaContexto | undefined>(
@@ -45,6 +51,10 @@ export const ContextJogoFisica: React.FC<PropsWithChildren> = ({
   const areaLargura = useSharedValue(0);
   const areaAltura = useSharedValue(0);
   const tijolos = useSharedValue<Tijolo[]>([]);
+  const paddleMovement: PaddleMovement = {
+    isMovingLeft: useSharedValue(false),
+    isMovingRight: useSharedValue(false),
+  };
 
   const value = useMemo(
     () => ({
@@ -56,6 +66,7 @@ export const ContextJogoFisica: React.FC<PropsWithChildren> = ({
       areaLargura,
       areaAltura,
       tijolos,
+      paddleMovement,
     }),
     []
   );

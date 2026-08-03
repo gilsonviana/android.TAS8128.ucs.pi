@@ -1,11 +1,12 @@
 import { View, type LayoutChangeEvent } from "react-native";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { BottomTabInset, Spacing } from "@/constants/theme";
 import { BOLA_FACIL, PADDLE_FACIL } from "@/constants/grade";
+import { BottomTabInset, Spacing } from "@/constants/theme";
 import { useJogoFisica } from "@/contexts/jogoFisica";
-import { GradeFacil } from "@/pages/Jogo/components/GradeFacil";
 import { Bola } from "@/pages/Jogo/components/Bola";
+import { GradeFacil } from "@/pages/Jogo/components/GradeFacil";
 import { Paddle } from "@/pages/Jogo/components/Paddle";
 
 export const TelaJogo = () => {
@@ -19,6 +20,7 @@ export const TelaJogo = () => {
     areaLargura,
     areaAltura,
     tijolos,
+    paddleMovement,
   } = useJogoFisica();
 
   const insets = {
@@ -48,14 +50,51 @@ export const TelaJogo = () => {
     }
   };
 
+  const tap = Gesture.Tap()
+    .onStart((e) => {
+      "worklet";
+      const screenCenter = areaLargura.value / 2;
+      if (e.x < screenCenter) {
+        paddleMovement.isMovingLeft.value = true;
+      } else {
+        paddleMovement.isMovingRight.value = true;
+      }
+    })
+    .onFinalize(() => {
+      "worklet";
+      paddleMovement.isMovingLeft.value = false;
+      paddleMovement.isMovingRight.value = false;
+    });
+
+  const longPress = Gesture.LongPress()
+    .minDuration(50)
+    .onStart((e) => {
+      "worklet";
+      const screenCenter = areaLargura.value / 2;
+      if (e.x < screenCenter) {
+        paddleMovement.isMovingLeft.value = true;
+      } else {
+        paddleMovement.isMovingRight.value = true;
+      }
+    })
+    .onFinalize(() => {
+      "worklet";
+      paddleMovement.isMovingLeft.value = false;
+      paddleMovement.isMovingRight.value = false;
+    });
+
+  const combined = Gesture.Simultaneous(tap, longPress);
+
   return (
-    <View
-      style={{ ...insetStyle, flex: 1, position: "relative" }}
-      onLayout={onLayoutArea}
-    >
-      <GradeFacil />
-      <Bola />
-      <Paddle />
-    </View>
+    <GestureDetector gesture={combined}>
+      <View
+        style={{ ...insetStyle, flex: 1, position: "relative" }}
+        onLayout={onLayoutArea}
+      >
+        <GradeFacil />
+        <Bola />
+        <Paddle />
+      </View>
+    </GestureDetector>
   );
 };
