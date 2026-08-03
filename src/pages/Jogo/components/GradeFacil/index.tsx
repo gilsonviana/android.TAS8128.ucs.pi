@@ -4,12 +4,7 @@ import { View } from "react-native";
 
 export const GradeFacil: React.FC = () => {
   return (
-    <View
-      style={{
-        borderWidth: 2,
-        borderColor: "red",
-      }}
-    >
+    <View>
       {Object.values(GRADE_FACIL).map((value, i) => (
         <View
           key={`${value}_${i}`}

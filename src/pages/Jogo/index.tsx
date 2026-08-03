@@ -3,6 +3,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { BottomTabInset, Spacing } from "@/constants/theme";
 import { GradeFacil } from "@/pages/Jogo/components/GradeFacil";
+import { Paddle } from "@/pages/Jogo/components/Paddle";
 
 export const TelaJogo = () => {
   const safeAreaInsets = useSafeAreaInsets();
@@ -19,8 +20,9 @@ export const TelaJogo = () => {
   };
 
   return (
-    <View style={{ ...insetStyle, flex: 1 }}>
+    <View style={{ ...insetStyle, flex: 1, position: "relative" }}>
       <GradeFacil />
+      <Paddle />
     </View>
   );
 };
