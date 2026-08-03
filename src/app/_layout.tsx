@@ -21,6 +21,12 @@ export default function TabLayout() {
         >
           <Stack.Screen name="index" />
           <Stack.Screen name="jogo" />
+          <Stack.Screen
+            name="creditos"
+            options={{
+              presentation: "transparentModal",
+            }}
+          />
         </Stack>
       </ContextJogo>
     </ThemeProvider>

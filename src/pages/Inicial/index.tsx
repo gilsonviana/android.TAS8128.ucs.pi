@@ -1,9 +1,11 @@
-import { Pressable, Text, View } from "react-native";
+import { Link } from "expo-router";
+import { Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { ThemedText } from "@/components/themed-text";
+import { ThemedView } from "@/components/themed-view";
 import { BottomTabInset, Spacing } from "@/constants/theme";
 import { useJogo } from "@/contexts/jogo";
-import { Link } from "expo-router";
 
 export const TelaInicial = () => {
   const { obtemNomeNivel, aumentaNivelDificuldade } = useJogo();
@@ -21,17 +23,17 @@ export const TelaInicial = () => {
   };
 
   return (
-    <View style={insetStyle}>
-      <Text>Bem-vindo ao Quebra Tijolos</Text>
+    <ThemedView style={{ ...insetStyle, flex: 1 }}>
+      <ThemedText>Bem-vindo ao Quebra Tijolos</ThemedText>
       <Link href="/jogo">
-        <Text>Iniciar Jogo</Text>
+        <ThemedText>Iniciar Jogo</ThemedText>
       </Link>
       <Pressable onPress={aumentaNivelDificuldade}>
-        <Text>Nivel: {obtemNomeNivel}</Text>
+        <ThemedText>Nivel: {obtemNomeNivel}</ThemedText>
       </Pressable>
-      <Pressable>
-        <Text>Créditos</Text>
-      </Pressable>
-    </View>
+      <Link href="/creditos">
+        <ThemedText>Créditos</ThemedText>
+      </Link>
+    </ThemedView>
   );
 };
