@@ -1,7 +1,8 @@
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { BottomTabInset, Spacing } from "@/constants/theme";
+import { GradeFacil } from "@/pages/Jogo/components/GradeFacil";
 
 export const TelaJogo = () => {
   const safeAreaInsets = useSafeAreaInsets();
@@ -18,8 +19,8 @@ export const TelaJogo = () => {
   };
 
   return (
-    <View style={insetStyle}>
-      <Text>Bem-vindo ao Jogo</Text>
+    <View style={{ ...insetStyle, flex: 1 }}>
+      <GradeFacil />
     </View>
   );
 };

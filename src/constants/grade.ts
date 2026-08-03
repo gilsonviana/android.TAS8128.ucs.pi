@@ -1,0 +1,6 @@
+export const GRADE_FACIL = {
+  1: 7,
+  2: 7,
+  3: 7,
+  4: 7,
+};
