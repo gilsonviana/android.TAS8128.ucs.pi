@@ -1,14 +1,29 @@
-import { Pressable, type PressableProps } from "react-native";
+import {
+  Pressable,
+  type GestureResponderEvent,
+  type PressableProps,
+} from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
 import { useTheme } from "@/hooks/use-theme";
+import { LinkProps, useRouter } from "expo-router";
 
 export type ThemeButtonProps = PressableProps & {
   text: string;
+  href?: LinkProps["href"];
 };
 
-export function ThemedButton({ text, ...otherProps }: ThemeButtonProps) {
+export function ThemedButton({ text, href, ...otherProps }: ThemeButtonProps) {
   const { Colors, Spacing, FontSizes } = useTheme();
+  const router = useRouter();
+
+  const onPress = (e: GestureResponderEvent) => {
+    if (href) {
+      router.navigate(href);
+      return;
+    }
+    otherProps?.onPress?.(e);
+  };
 
   return (
     <Pressable
@@ -20,6 +35,7 @@ export function ThemedButton({ text, ...otherProps }: ThemeButtonProps) {
           borderRadius: Spacing.three,
         },
       ]}
+      onPress={onPress}
       {...otherProps}
     >
       <ThemedText

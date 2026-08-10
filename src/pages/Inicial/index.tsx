@@ -1,5 +1,4 @@
-import { Link } from "expo-router";
-import { Pressable, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { ThemedButton } from "@/components/themed-button";
@@ -38,6 +37,7 @@ export const TelaInicial = () => {
           width: 280,
           flex: 1,
           gap: 60,
+          marginTop: 60,
         }}
       >
         <ThemedText
@@ -49,15 +49,12 @@ export const TelaInicial = () => {
           Bem-vindo ao Quebra Tijolos
         </ThemedText>
         <View style={{ flex: 1, gap: Spacing.four }}>
-          <Link href="/jogo">
-            <ThemedButton text="Iniciar Jogo" />
-          </Link>
-          <Pressable onPress={aumentaNivelDificuldade}>
-            <ThemedButton text={`Nivel: ${obtemNomeNivel}`} />
-          </Pressable>
-          <Link href="/creditos">
-            <ThemedButton text="Créditos" />
-          </Link>
+          <ThemedButton href="/jogo" text="Iniciar Jogo" />
+          <ThemedButton
+            onPress={aumentaNivelDificuldade}
+            text={`Nivel: ${obtemNomeNivel}`}
+          />
+          <ThemedButton href="/creditos" text="Créditos" />
         </View>
       </View>
     </ThemedView>
