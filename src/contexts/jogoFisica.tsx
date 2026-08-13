@@ -1,4 +1,11 @@
-import { PropsWithChildren, createContext, useContext, useMemo } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  type FC,
+  type PropsWithChildren,
+} from "react";
 import { useSharedValue, type SharedValue } from "react-native-reanimated";
 
 export type Tijolo = {
@@ -9,12 +16,12 @@ export type Tijolo = {
   visivel: boolean;
 };
 
-type PaddleMovement = {
+export type PaddleMovement = {
   isMovingLeft: SharedValue<boolean>;
   isMovingRight: SharedValue<boolean>;
 };
 
-type JogoFisicaContexto = {
+export type JogoFisicaContexto = {
   bolaX: SharedValue<number>;
   bolaY: SharedValue<number>;
   velocidadeX: SharedValue<number>;
@@ -24,25 +31,24 @@ type JogoFisicaContexto = {
   areaAltura: SharedValue<number>;
   tijolos: SharedValue<Tijolo[]>;
   paddleMovement: PaddleMovement;
+  reset: () => void;
 };
 
 const JogoFisicaContext = createContext<JogoFisicaContexto | undefined>(
-  undefined
+  undefined,
 );
 
 export const useJogoFisica = () => {
   const context = useContext(JogoFisicaContext);
   if (!context) {
     throw new Error(
-      "useJogoFisica must be used within ContextJogoFisica provider"
+      "useJogoFisica must be used within ContextJogoFisica provider",
     );
   }
   return context;
 };
 
-export const ContextJogoFisica: React.FC<PropsWithChildren> = ({
-  children,
-}) => {
+export const ContextJogoFisica: FC<PropsWithChildren> = ({ children }) => {
   const bolaX = useSharedValue(0);
   const bolaY = useSharedValue(0);
   const velocidadeX = useSharedValue(0);
@@ -51,10 +57,37 @@ export const ContextJogoFisica: React.FC<PropsWithChildren> = ({
   const areaLargura = useSharedValue(0);
   const areaAltura = useSharedValue(0);
   const tijolos = useSharedValue<Tijolo[]>([]);
-  const paddleMovement: PaddleMovement = {
-    isMovingLeft: useSharedValue(false),
-    isMovingRight: useSharedValue(false),
-  };
+  const isMovingLeft = useSharedValue(false);
+  const isMovingRight = useSharedValue(false);
+
+  const paddleMovement = useMemo(
+    () => ({ isMovingLeft, isMovingRight }),
+    [isMovingLeft, isMovingRight],
+  );
+
+  const reset = useCallback(() => {
+    bolaX.value = 0;
+    bolaY.value = 0;
+    velocidadeX.value = 0;
+    velocidadeY.value = 0;
+    paddleX.value = 0;
+    areaLargura.value = 0;
+    areaAltura.value = 0;
+    tijolos.value = [];
+    isMovingLeft.value = false;
+    isMovingRight.value = false;
+  }, [
+    bolaX,
+    bolaY,
+    velocidadeX,
+    velocidadeY,
+    paddleX,
+    areaLargura,
+    areaAltura,
+    tijolos,
+    isMovingLeft,
+    isMovingRight,
+  ]);
 
   const value = useMemo(
     () => ({
@@ -67,8 +100,20 @@ export const ContextJogoFisica: React.FC<PropsWithChildren> = ({
       areaAltura,
       tijolos,
       paddleMovement,
+      reset,
     }),
-    []
+    [
+      bolaX,
+      bolaY,
+      velocidadeX,
+      velocidadeY,
+      paddleX,
+      areaLargura,
+      areaAltura,
+      tijolos,
+      paddleMovement,
+      reset,
+    ],
   );
 
   return (

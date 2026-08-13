@@ -1,3 +1,5 @@
+import { useFocusEffect } from "expo-router";
+import { useCallback } from "react";
 import { View, type LayoutChangeEvent } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -21,7 +23,14 @@ export const TelaJogo = () => {
     areaAltura,
     tijolos,
     paddleMovement,
+    reset,
   } = useJogoFisica();
+
+  useFocusEffect(
+    useCallback(() => {
+      reset();
+    }, [reset]),
+  );
 
   const insets = {
     ...safeAreaInsets,

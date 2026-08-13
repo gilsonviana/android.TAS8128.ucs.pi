@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { ThemedButton } from "@/components/themed-button";
@@ -60,8 +60,3 @@ export const TelaInicial = () => {
     </ThemedView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {},
-  title: {},
-});
