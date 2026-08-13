@@ -20,7 +20,7 @@ type JogoContexto = {
   estado: EstadoJogo;
   reinicio: number;
   aumentaNivelDificuldade: () => void;
-  reIniciarJogo: () => void;
+  reIniciarJogo: (inicio: boolean) => void;
   finalizaJogo: () => void;
 };
 
@@ -62,12 +62,16 @@ export const ContextJogo: React.FC<PropsWithChildren> = ({ children }) => {
     setEstado("gameover");
   }, []);
 
-  const reIniciarJogo = useCallback(() => {
-    resetFisica();
-    setReinicio((valor) => valor + 1);
-    setEstado("jogando");
-    router.replace("/jogo");
-  }, [resetFisica, router]);
+  const reIniciarJogo = useCallback(
+    (inicio = false) => {
+      resetFisica();
+      setReinicio((valor) => valor + 1);
+      setEstado("jogando");
+      router.dismissAll();
+      router.replace(inicio ? "/" : "/jogo");
+    },
+    [resetFisica, router],
+  );
 
   const value = useMemo(
     () => ({

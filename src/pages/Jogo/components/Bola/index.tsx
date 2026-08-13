@@ -1,6 +1,7 @@
 import { BOLA_FACIL, PADDLE_FACIL } from "@/constants/grade";
 import { useJogo } from "@/contexts/jogo";
 import { useJogoFisica } from "@/contexts/jogoFisica";
+import { useTheme } from "@/hooks/use-theme";
 import { StyleSheet } from "react-native";
 import Animated, {
   runOnJS,
@@ -9,6 +10,7 @@ import Animated, {
 } from "react-native-reanimated";
 
 export const Bola: React.FC = () => {
+  const { Colors } = useTheme();
   const { estado, finalizaJogo } = useJogo();
   const {
     bolaX,
@@ -155,7 +157,11 @@ export const Bola: React.FC = () => {
     top: bolaY.value - BOLA_FACIL.RAIO,
   }));
 
-  return <Animated.View style={[styles.bola, estiloAnimado]} />;
+  return (
+    <Animated.View
+      style={[styles.bola, estiloAnimado, { backgroundColor: Colors.text }]}
+    />
+  );
 };
 
 const styles = StyleSheet.create({

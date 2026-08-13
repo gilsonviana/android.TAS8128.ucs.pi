@@ -1,4 +1,5 @@
 import { useJogoFisica } from "@/contexts/jogoFisica";
+import { useTheme } from "@/hooks/use-theme";
 import { useEffect } from "react";
 import { StyleSheet } from "react-native";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
@@ -14,6 +15,7 @@ type TijoloProps = {
 };
 
 export const Tijolo: React.FC<TijoloProps> = ({ indice }) => {
+  const { Colors } = useTheme();
   const { tijolos, areaLargura } = useJogoFisica();
 
   useEffect(() => {
@@ -52,7 +54,15 @@ export const Tijolo: React.FC<TijoloProps> = ({ indice }) => {
     opacity: tijolos.value[indice]?.visivel === false ? 0 : 1,
   }));
 
-  return <Animated.View style={[styles.container, estiloAnimado]} />;
+  return (
+    <Animated.View
+      style={[
+        styles.container,
+        estiloAnimado,
+        { backgroundColor: Colors.text },
+      ]}
+    />
+  );
 };
 
 const styles = StyleSheet.create({
@@ -60,6 +70,5 @@ const styles = StyleSheet.create({
     height: ALTURA_TIJOLO,
     flex: 1,
     borderWidth: 1,
-    borderColor: "blue",
   },
 });

@@ -1,7 +1,8 @@
-import { View, type LayoutChangeEvent } from "react-native";
+import { type LayoutChangeEvent } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { ThemedView } from "@/components/themed-view";
 import { BOLA_FACIL, PADDLE_FACIL } from "@/constants/grade";
 import { BottomTabInset, Spacing } from "@/constants/theme";
 import { useJogo } from "@/contexts/jogo";
@@ -89,14 +90,14 @@ export const TelaJogo = () => {
 
   return (
     <GestureDetector gesture={combined}>
-      <View
+      <ThemedView
         style={{ ...insetStyle, flex: 1, position: "relative" }}
         onLayout={onLayoutArea}
       >
         <GradeFacil key={reinicio} />
         <Bola />
         <Paddle />
-      </View>
+      </ThemedView>
     </GestureDetector>
   );
 };

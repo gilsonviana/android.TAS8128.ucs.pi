@@ -1,5 +1,6 @@
 import { PADDLE_FACIL } from "@/constants/grade";
 import { useJogoFisica } from "@/contexts/jogoFisica";
+import { useTheme } from "@/hooks/use-theme";
 import { StyleSheet } from "react-native";
 import Animated, {
   useAnimatedStyle,
@@ -9,6 +10,7 @@ import Animated, {
 const PADDLE_SPEED = 600;
 
 export const Paddle: React.FC = () => {
+  const { Colors } = useTheme();
   const { paddleX, areaLargura, paddleMovement } = useJogoFisica();
 
   useFrameCallback(() => {
@@ -32,7 +34,15 @@ export const Paddle: React.FC = () => {
     left: paddleX.value - PADDLE_FACIL.LARGURA / 2,
   }));
 
-  return <Animated.View style={[styles.container, estiloAnimado]} />;
+  return (
+    <Animated.View
+      style={[
+        styles.container,
+        estiloAnimado,
+        { backgroundColor: Colors.text },
+      ]}
+    />
+  );
 };
 
 const styles = StyleSheet.create({
