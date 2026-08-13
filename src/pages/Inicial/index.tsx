@@ -54,7 +54,7 @@ export const TelaInicial = () => {
             onPress={aumentaNivelDificuldade}
             text={`Nivel: ${obtemNomeNivel}`}
           />
-          <ThemedButton href="/creditos" text="Créditos" />
+          <ThemedButton href="/modals/creditos" text="Créditos" />
         </View>
       </View>
     </ThemedView>

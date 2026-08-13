@@ -13,8 +13,8 @@ export default function TabLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <ContextJogo>
-          <ContextJogoFisica>
+        <ContextJogoFisica>
+          <ContextJogo>
             <Stack
               screenOptions={{
                 headerShown: false,
@@ -23,14 +23,16 @@ export default function TabLayout() {
               <Stack.Screen name="index" />
               <Stack.Screen name="jogo" />
               <Stack.Screen
-                name="creditos"
+                name="modals"
                 options={{
+                  headerShown: false,
                   presentation: "transparentModal",
+                  animation: "fade",
                 }}
               />
             </Stack>
-          </ContextJogoFisica>
-        </ContextJogo>
+          </ContextJogo>
+        </ContextJogoFisica>
       </ThemeProvider>
     </GestureHandlerRootView>
   );

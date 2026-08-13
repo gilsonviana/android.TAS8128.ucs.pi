@@ -4,6 +4,7 @@ import { StyleSheet } from "react-native";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 
 const ALTURA_TIJOLO = 32;
+const PADDING_TOP = 16;
 const PADDING_HORIZONTAL = 8;
 const MARGIN_BOTTOM = 4;
 const BRICKS_PER_ROW = 7;
@@ -26,8 +27,7 @@ export const Tijolo: React.FC<TijoloProps> = ({ indice }) => {
           const colIndex = indice % BRICKS_PER_ROW;
 
           const x = PADDING_HORIZONTAL + colIndex * brickWidth;
-          const y =
-            PADDING_HORIZONTAL + rowIndex * (ALTURA_TIJOLO + MARGIN_BOTTOM);
+          const y = PADDING_TOP + rowIndex * (ALTURA_TIJOLO + MARGIN_BOTTOM);
 
           const atual = tijolos.value;
           const copia = [...atual];

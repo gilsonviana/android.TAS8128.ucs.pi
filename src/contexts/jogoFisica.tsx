@@ -1,3 +1,4 @@
+import { BOLA_FACIL, PADDLE_FACIL } from "@/constants/grade";
 import {
   createContext,
   useCallback,
@@ -66,13 +67,20 @@ export const ContextJogoFisica: FC<PropsWithChildren> = ({ children }) => {
   );
 
   const reset = useCallback(() => {
-    bolaX.value = 0;
-    bolaY.value = 0;
-    velocidadeX.value = 0;
-    velocidadeY.value = 0;
-    paddleX.value = 0;
-    areaLargura.value = 0;
-    areaAltura.value = 0;
+    if (areaLargura.value > 0 && areaAltura.value > 0) {
+      bolaX.value = areaLargura.value / 2;
+      bolaY.value =
+        areaAltura.value - PADDLE_FACIL.ALTURA - BOLA_FACIL.RAIO * 2 - 40;
+      velocidadeX.value = BOLA_FACIL.VELOCIDADE_INICIAL * 0.6;
+      velocidadeY.value = -BOLA_FACIL.VELOCIDADE_INICIAL;
+      paddleX.value = areaLargura.value / 2;
+    } else {
+      bolaX.value = 0;
+      bolaY.value = 0;
+      velocidadeX.value = 0;
+      velocidadeY.value = 0;
+      paddleX.value = 0;
+    }
     tijolos.value = [];
     isMovingLeft.value = false;
     isMovingRight.value = false;

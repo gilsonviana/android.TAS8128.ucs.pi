@@ -1,17 +1,17 @@
-import { useFocusEffect } from "expo-router";
-import { useCallback } from "react";
 import { View, type LayoutChangeEvent } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { BOLA_FACIL, PADDLE_FACIL } from "@/constants/grade";
 import { BottomTabInset, Spacing } from "@/constants/theme";
+import { useJogo } from "@/contexts/jogo";
 import { useJogoFisica } from "@/contexts/jogoFisica";
 import { Bola } from "@/pages/Jogo/components/Bola";
 import { GradeFacil } from "@/pages/Jogo/components/GradeFacil";
 import { Paddle } from "@/pages/Jogo/components/Paddle";
 
 export const TelaJogo = () => {
+  const { reinicio } = useJogo();
   const safeAreaInsets = useSafeAreaInsets();
   const {
     bolaX,
@@ -23,14 +23,7 @@ export const TelaJogo = () => {
     areaAltura,
     tijolos,
     paddleMovement,
-    reset,
   } = useJogoFisica();
-
-  useFocusEffect(
-    useCallback(() => {
-      reset();
-    }, [reset]),
-  );
 
   const insets = {
     ...safeAreaInsets,
@@ -100,7 +93,7 @@ export const TelaJogo = () => {
         style={{ ...insetStyle, flex: 1, position: "relative" }}
         onLayout={onLayoutArea}
       >
-        <GradeFacil />
+        <GradeFacil key={reinicio} />
         <Bola />
         <Paddle />
       </View>

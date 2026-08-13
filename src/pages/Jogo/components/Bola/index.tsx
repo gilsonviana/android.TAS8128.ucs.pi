@@ -1,12 +1,15 @@
 import { BOLA_FACIL, PADDLE_FACIL } from "@/constants/grade";
+import { useJogo } from "@/contexts/jogo";
 import { useJogoFisica } from "@/contexts/jogoFisica";
 import { StyleSheet } from "react-native";
 import Animated, {
+  runOnJS,
   useAnimatedStyle,
   useFrameCallback,
 } from "react-native-reanimated";
 
 export const Bola: React.FC = () => {
+  const { estado, finalizaJogo } = useJogo();
   const {
     bolaX,
     bolaY,
@@ -22,13 +25,19 @@ export const Bola: React.FC = () => {
     "worklet";
     const dt = (frameInfo.timeSincePreviousFrame ?? 16) / 1000;
     const raio = BOLA_FACIL.RAIO;
+    const anteriorX = bolaX.value;
+    const anteriorY = bolaY.value;
 
-    let novoX = bolaX.value + velocidadeX.value * dt;
-    let novoY = bolaY.value + velocidadeY.value * dt;
+    let novoX = anteriorX + velocidadeX.value * dt;
+    let novoY = anteriorY + velocidadeY.value * dt;
     let vx = velocidadeX.value;
     let vy = velocidadeY.value;
 
     if (areaLargura.value === 0 || areaAltura.value === 0) {
+      return;
+    }
+
+    if (estado === "gameover" || (vx === 0 && vy === 0)) {
       return;
     }
 
@@ -61,10 +70,9 @@ export const Bola: React.FC = () => {
     }
 
     if (novoY - raio > areaAltura.value) {
-      novoX = areaLargura.value / 2;
-      novoY = areaAltura.value - PADDLE_FACIL.ALTURA - BOLA_FACIL.RAIO * 2 - 40;
-      vx = BOLA_FACIL.VELOCIDADE_INICIAL * 0.6;
-      vy = -BOLA_FACIL.VELOCIDADE_INICIAL;
+      vx = 0;
+      vy = 0;
+      runOnJS(finalizaJogo)();
     }
 
     const tijolosAtual = tijolos.value;
@@ -72,27 +80,62 @@ export const Bola: React.FC = () => {
       const t = tijolosAtual[i];
       if (!t || !t.visivel) continue;
 
+      const limiteEsquerdo = t.x - raio;
+      const limiteDireito = t.x + t.largura + raio;
+      const limiteSuperior = t.y - raio;
+      const limiteInferior = t.y + t.altura + raio;
+      const deslocamentoX = novoX - anteriorX;
+      const deslocamentoY = novoY - anteriorY;
+      const sobrepoe =
+        novoX >= limiteEsquerdo &&
+        novoX <= limiteDireito &&
+        novoY >= limiteSuperior &&
+        novoY <= limiteInferior;
+
+      let entradaX = -Infinity;
+      let saidaX = Infinity;
+      let entradaY = -Infinity;
+      let saidaY = Infinity;
+
+      if (deslocamentoX === 0) {
+        if (anteriorX < limiteEsquerdo || anteriorX > limiteDireito) {
+          continue;
+        }
+      } else {
+        const tempo1 = (limiteEsquerdo - anteriorX) / deslocamentoX;
+        const tempo2 = (limiteDireito - anteriorX) / deslocamentoX;
+        entradaX = Math.min(tempo1, tempo2);
+        saidaX = Math.max(tempo1, tempo2);
+      }
+
+      if (deslocamentoY === 0) {
+        if (anteriorY < limiteSuperior || anteriorY > limiteInferior) {
+          continue;
+        }
+      } else {
+        const tempo1 = (limiteSuperior - anteriorY) / deslocamentoY;
+        const tempo2 = (limiteInferior - anteriorY) / deslocamentoY;
+        entradaY = Math.min(tempo1, tempo2);
+        saidaY = Math.max(tempo1, tempo2);
+      }
+
+      const tempoEntrada = Math.max(entradaX, entradaY);
+      const tempoSaida = Math.min(saidaX, saidaY);
       const colide =
-        novoX + raio > t.x &&
-        novoX - raio < t.x + t.largura &&
-        novoY + raio > t.y &&
-        novoY - raio < t.y + t.altura;
+        sobrepoe ||
+        (tempoEntrada <= tempoSaida && tempoEntrada <= 1 && tempoSaida >= 0);
 
       if (colide) {
         const copia = [...tijolosAtual];
         copia[i] = { ...t, visivel: false };
         tijolos.value = copia;
 
-        const overlapX = Math.min(
-          novoX + raio - t.x,
-          t.x + t.largura - (novoX - raio),
-        );
-        const overlapY = Math.min(
-          novoY + raio - t.y,
-          t.y + t.altura - (novoY - raio),
-        );
+        if (!sobrepoe) {
+          novoX = anteriorX + deslocamentoX * tempoEntrada;
+          novoY = anteriorY + deslocamentoY * tempoEntrada;
+        }
 
-        if (overlapX < overlapY) {
+        if (entradaX > entradaY) {
           vx = -vx;
         } else {
           vy = -vy;
