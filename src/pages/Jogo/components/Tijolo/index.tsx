@@ -1,35 +1,38 @@
+import { GRADE_LAYOUT } from "@/constants/grade";
 import { useJogoFisica } from "@/contexts/jogoFisica";
 import { useTheme } from "@/hooks/use-theme";
 import { useEffect } from "react";
 import { StyleSheet } from "react-native";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 
-const ALTURA_TIJOLO = 32;
-const PADDING_TOP = 16;
-const PADDING_HORIZONTAL = 8;
-const MARGIN_BOTTOM = 4;
-const BRICKS_PER_ROW = 7;
-
 type TijoloProps = {
   indice: number;
+  linha: number;
+  coluna: number;
+  colunasNaLinha: number;
 };
 
-export const Tijolo: React.FC<TijoloProps> = ({ indice }) => {
+export const Tijolo: React.FC<TijoloProps> = ({
+  indice,
+  linha,
+  coluna,
+  colunasNaLinha,
+}) => {
   const { Colors } = useTheme();
   const { tijolos, areaLargura } = useJogoFisica();
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       try {
-        // Calculate brick position based on grid layout
         if (areaLargura.value > 0) {
           const brickWidth =
-            (areaLargura.value - PADDING_HORIZONTAL * 2) / BRICKS_PER_ROW;
-          const rowIndex = Math.floor(indice / BRICKS_PER_ROW);
-          const colIndex = indice % BRICKS_PER_ROW;
-
-          const x = PADDING_HORIZONTAL + colIndex * brickWidth;
-          const y = PADDING_TOP + rowIndex * (ALTURA_TIJOLO + MARGIN_BOTTOM);
+            (areaLargura.value - GRADE_LAYOUT.PADDING_HORIZONTAL * 2) /
+            colunasNaLinha;
+          const x =
+            GRADE_LAYOUT.PADDING_HORIZONTAL + coluna * brickWidth;
+          const y =
+            GRADE_LAYOUT.PADDING_TOP +
+            linha * (GRADE_LAYOUT.ALTURA_TIJOLO + GRADE_LAYOUT.MARGIN_BOTTOM);
 
           const atual = tijolos.value;
           const copia = [...atual];
@@ -37,7 +40,7 @@ export const Tijolo: React.FC<TijoloProps> = ({ indice }) => {
             x,
             y,
             largura: brickWidth,
-            altura: ALTURA_TIJOLO,
+            altura: GRADE_LAYOUT.ALTURA_TIJOLO,
             visivel: true,
           };
           tijolos.value = copia;
@@ -48,7 +51,7 @@ export const Tijolo: React.FC<TijoloProps> = ({ indice }) => {
     }, 250);
 
     return () => clearTimeout(timeoutId);
-  }, [indice, tijolos, areaLargura]);
+  }, [indice, linha, coluna, colunasNaLinha, tijolos, areaLargura]);
 
   const estiloAnimado = useAnimatedStyle(() => ({
     opacity: tijolos.value[indice]?.visivel === false ? 0 : 1,
@@ -67,7 +70,7 @@ export const Tijolo: React.FC<TijoloProps> = ({ indice }) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: ALTURA_TIJOLO,
+    height: GRADE_LAYOUT.ALTURA_TIJOLO,
     flex: 1,
     borderWidth: 1,
   },

@@ -8,11 +8,11 @@ import { BottomTabInset, Spacing } from "@/constants/theme";
 import { useJogo } from "@/contexts/jogo";
 import { useJogoFisica } from "@/contexts/jogoFisica";
 import { Bola } from "@/pages/Jogo/components/Bola";
-import { GradeFacil } from "@/pages/Jogo/components/GradeFacil";
+import { GradeAtual } from "@/pages/Jogo/components/Grades";
 import { Paddle } from "@/pages/Jogo/components/Paddle";
 
 export const TelaJogo = () => {
-  const { reinicio } = useJogo();
+  const { reinicio, nivel } = useJogo();
   const safeAreaInsets = useSafeAreaInsets();
   const {
     bolaX,
@@ -94,7 +94,7 @@ export const TelaJogo = () => {
         style={{ ...insetStyle, flex: 1, position: "relative" }}
         onLayout={onLayoutArea}
       >
-        <GradeFacil key={reinicio} />
+        <GradeAtual key={`${nivel}_${reinicio}`} />
         <Bola />
         <Paddle />
       </ThemedView>

@@ -8,9 +8,15 @@ export const BOLA_FACIL = {
   VELOCIDADE_INICIAL: 200,
 };
 
-export const GRADE_FACIL = {
-  1: 7,
-  2: 7,
-  3: 7,
-  4: 7,
-};
+export const GRADE_LAYOUT = {
+  PADDING_TOP: 16,
+  PADDING_HORIZONTAL: 8,
+  MARGIN_BOTTOM: 4,
+  ALTURA_TIJOLO: 32,
+} as const;
+
+export const GRADE_FACIL = [7, 7, 7, 7] as const;
+
+export const GRADE_MEDIO = [8, 8, 8, 8, 8, 8] as const;
+
+export const GRADE_DIFICIL = [9, 9, 9, 9, 9, 9, 9, 9] as const;
