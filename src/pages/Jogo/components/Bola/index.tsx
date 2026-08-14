@@ -1,4 +1,4 @@
-import { BOLA_FACIL, PADDLE_FACIL } from "@/constants/grade";
+import { getBolaConfig, getPaddleConfig } from "@/constants/grade";
 import { useJogo } from "@/contexts/jogo";
 import { useJogoFisica } from "@/contexts/jogoFisica";
 import { useTheme } from "@/hooks/use-theme";
@@ -11,7 +11,7 @@ import Animated, {
 
 export const Bola: React.FC = () => {
   const { Colors } = useTheme();
-  const { estado, finalizaJogo } = useJogo();
+  const { estado, finalizaJogo, nivel } = useJogo();
   const {
     bolaX,
     bolaY,
@@ -22,11 +22,13 @@ export const Bola: React.FC = () => {
     areaAltura,
     tijolos,
   } = useJogoFisica();
+  const bolaConfig = getBolaConfig(nivel);
+  const paddleConfig = getPaddleConfig(nivel);
 
   useFrameCallback((frameInfo) => {
     "worklet";
     const dt = (frameInfo.timeSincePreviousFrame ?? 16) / 1000;
-    const raio = BOLA_FACIL.RAIO;
+    const raio = bolaConfig.RAIO;
     const anteriorX = bolaX.value;
     const anteriorY = bolaY.value;
 
@@ -56,10 +58,10 @@ export const Bola: React.FC = () => {
       vy = -vy;
     }
 
-    const paddleY = areaAltura.value - PADDLE_FACIL.ALTURA;
+    const paddleY = areaAltura.value - paddleConfig.ALTURA;
     const dentroPaddleX =
-      novoX + raio > paddleX.value - PADDLE_FACIL.LARGURA / 2 &&
-      novoX - raio < paddleX.value + PADDLE_FACIL.LARGURA / 2;
+      novoX + raio > paddleX.value - paddleConfig.LARGURA / 2 &&
+      novoX - raio < paddleX.value + paddleConfig.LARGURA / 2;
 
     if (
       vy > 0 &&
@@ -153,13 +155,22 @@ export const Bola: React.FC = () => {
   });
 
   const estiloAnimado = useAnimatedStyle(() => ({
-    left: bolaX.value - BOLA_FACIL.RAIO,
-    top: bolaY.value - BOLA_FACIL.RAIO,
+    left: bolaX.value - bolaConfig.RAIO,
+    top: bolaY.value - bolaConfig.RAIO,
   }));
 
   return (
     <Animated.View
-      style={[styles.bola, estiloAnimado, { backgroundColor: Colors.text }]}
+      style={[
+        styles.bola,
+        estiloAnimado,
+        {
+          backgroundColor: Colors.text,
+          width: bolaConfig.RAIO * 2,
+          height: bolaConfig.RAIO * 2,
+          borderRadius: bolaConfig.RAIO,
+        },
+      ]}
     />
   );
 };
@@ -167,9 +178,6 @@ export const Bola: React.FC = () => {
 const styles = StyleSheet.create({
   bola: {
     position: "absolute",
-    width: BOLA_FACIL.RAIO * 2,
-    height: BOLA_FACIL.RAIO * 2,
-    borderRadius: BOLA_FACIL.RAIO,
     backgroundColor: "black",
   },
 });

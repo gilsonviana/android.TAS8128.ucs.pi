@@ -3,7 +3,7 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { ThemedView } from "@/components/themed-view";
-import { BOLA_FACIL, PADDLE_FACIL } from "@/constants/grade";
+import { getBolaConfig, getPaddleConfig } from "@/constants/grade";
 import { BottomTabInset, Spacing } from "@/constants/theme";
 import { useJogo } from "@/contexts/jogo";
 import { useJogoFisica } from "@/contexts/jogoFisica";
@@ -40,14 +40,18 @@ export const TelaJogo = () => {
 
   const onLayoutArea = (e: LayoutChangeEvent) => {
     const { width, height } = e.nativeEvent.layout;
+    const bolaConfig = getBolaConfig(nivel);
+    const paddleConfig = getPaddleConfig(nivel);
+
     areaLargura.value = width;
     areaAltura.value = height;
 
     if (bolaX.value === 0 && bolaY.value === 0) {
       bolaX.value = width / 2;
-      bolaY.value = height - PADDLE_FACIL.ALTURA - BOLA_FACIL.RAIO * 2 - 40;
-      velocidadeX.value = BOLA_FACIL.VELOCIDADE_INICIAL * 0.6;
-      velocidadeY.value = -BOLA_FACIL.VELOCIDADE_INICIAL;
+      bolaY.value =
+        height - paddleConfig.ALTURA - bolaConfig.RAIO * 2 - 40;
+      velocidadeX.value = bolaConfig.VELOCIDADE_INICIAL * 0.6;
+      velocidadeY.value = -bolaConfig.VELOCIDADE_INICIAL;
       paddleX.value = width / 2;
       tijolos.value = [];
     }

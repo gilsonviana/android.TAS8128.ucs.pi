@@ -64,13 +64,13 @@ export const ContextJogo: React.FC<PropsWithChildren> = ({ children }) => {
 
   const reIniciarJogo = useCallback(
     (inicio = false) => {
-      resetFisica();
+      resetFisica(nivel);
       setReinicio((valor) => valor + 1);
       setEstado("jogando");
       router.dismissAll();
       router.replace(inicio ? "/" : "/jogo");
     },
-    [resetFisica, router],
+    [resetFisica, nivel, router],
   );
 
   const value = useMemo(

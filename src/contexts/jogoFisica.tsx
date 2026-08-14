@@ -1,4 +1,4 @@
-import { BOLA_FACIL, PADDLE_FACIL } from "@/constants/grade";
+import { getBolaConfig, getPaddleConfig } from "@/constants/grade";
 import {
   createContext,
   useCallback,
@@ -32,7 +32,7 @@ export type JogoFisicaContexto = {
   areaAltura: SharedValue<number>;
   tijolos: SharedValue<Tijolo[]>;
   paddleMovement: PaddleMovement;
-  reset: () => void;
+  reset: (nivel: number) => void;
 };
 
 const JogoFisicaContext = createContext<JogoFisicaContexto | undefined>(
@@ -66,36 +66,42 @@ export const ContextJogoFisica: FC<PropsWithChildren> = ({ children }) => {
     [isMovingLeft, isMovingRight],
   );
 
-  const reset = useCallback(() => {
-    if (areaLargura.value > 0 && areaAltura.value > 0) {
-      bolaX.value = areaLargura.value / 2;
-      bolaY.value =
-        areaAltura.value - PADDLE_FACIL.ALTURA - BOLA_FACIL.RAIO * 2 - 40;
-      velocidadeX.value = BOLA_FACIL.VELOCIDADE_INICIAL * 0.6;
-      velocidadeY.value = -BOLA_FACIL.VELOCIDADE_INICIAL;
-      paddleX.value = areaLargura.value / 2;
-    } else {
-      bolaX.value = 0;
-      bolaY.value = 0;
-      velocidadeX.value = 0;
-      velocidadeY.value = 0;
-      paddleX.value = 0;
-    }
-    tijolos.value = [];
-    isMovingLeft.value = false;
-    isMovingRight.value = false;
-  }, [
-    bolaX,
-    bolaY,
-    velocidadeX,
-    velocidadeY,
-    paddleX,
-    areaLargura,
-    areaAltura,
-    tijolos,
-    isMovingLeft,
-    isMovingRight,
-  ]);
+  const reset = useCallback(
+    (nivel: number) => {
+      const bolaConfig = getBolaConfig(nivel);
+      const paddleConfig = getPaddleConfig(nivel);
+
+      if (areaLargura.value > 0 && areaAltura.value > 0) {
+        bolaX.value = areaLargura.value / 2;
+        bolaY.value =
+          areaAltura.value - paddleConfig.ALTURA - bolaConfig.RAIO * 2 - 40;
+        velocidadeX.value = bolaConfig.VELOCIDADE_INICIAL * 0.6;
+        velocidadeY.value = -bolaConfig.VELOCIDADE_INICIAL;
+        paddleX.value = areaLargura.value / 2;
+      } else {
+        bolaX.value = 0;
+        bolaY.value = 0;
+        velocidadeX.value = 0;
+        velocidadeY.value = 0;
+        paddleX.value = 0;
+      }
+      tijolos.value = [];
+      isMovingLeft.value = false;
+      isMovingRight.value = false;
+    },
+    [
+      bolaX,
+      bolaY,
+      velocidadeX,
+      velocidadeY,
+      paddleX,
+      areaLargura,
+      areaAltura,
+      tijolos,
+      isMovingLeft,
+      isMovingRight,
+    ],
+  );
 
   const value = useMemo(
     () => ({

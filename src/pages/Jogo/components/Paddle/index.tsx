@@ -1,4 +1,5 @@
-import { PADDLE_FACIL } from "@/constants/grade";
+import { getPaddleConfig } from "@/constants/grade";
+import { useJogo } from "@/contexts/jogo";
 import { useJogoFisica } from "@/contexts/jogoFisica";
 import { useTheme } from "@/hooks/use-theme";
 import { StyleSheet } from "react-native";
@@ -11,11 +12,13 @@ const PADDLE_SPEED = 600;
 
 export const Paddle: React.FC = () => {
   const { Colors } = useTheme();
+  const { nivel } = useJogo();
   const { paddleX, areaLargura, paddleMovement } = useJogoFisica();
+  const paddleConfig = getPaddleConfig(nivel);
 
   useFrameCallback(() => {
     "worklet";
-    const meiaLargura = PADDLE_FACIL.LARGURA / 2;
+    const meiaLargura = paddleConfig.LARGURA / 2;
     const dt = 1 / 60;
     const distance = PADDLE_SPEED * dt;
 
@@ -31,7 +34,7 @@ export const Paddle: React.FC = () => {
   });
 
   const estiloAnimado = useAnimatedStyle(() => ({
-    left: paddleX.value - PADDLE_FACIL.LARGURA / 2,
+    left: paddleX.value - paddleConfig.LARGURA / 2,
   }));
 
   return (
@@ -39,7 +42,11 @@ export const Paddle: React.FC = () => {
       style={[
         styles.container,
         estiloAnimado,
-        { backgroundColor: Colors.text },
+        {
+          backgroundColor: Colors.text,
+          width: paddleConfig.LARGURA,
+          height: paddleConfig.ALTURA,
+        },
       ]}
     />
   );
@@ -50,8 +57,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     borderWidth: 1,
-    width: PADDLE_FACIL.LARGURA,
-    height: PADDLE_FACIL.ALTURA,
     borderRadius: 16,
   },
 });
