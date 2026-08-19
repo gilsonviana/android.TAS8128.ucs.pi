@@ -46,6 +46,14 @@ export const Bola: React.FC = () => {
       return;
     }
 
+    const tijolosIniciais = tijolos.value;
+    if (
+      tijolosIniciais.length < totalTijolos ||
+      tijolosIniciais.some((t) => !t)
+    ) {
+      return;
+    }
+
     if (
       estado === "gameover" ||
       estado === "ganhou" ||
