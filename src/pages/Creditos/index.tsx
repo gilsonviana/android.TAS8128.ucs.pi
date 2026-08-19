@@ -3,9 +3,20 @@ import { Pressable } from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { useTheme } from "@/hooks/use-theme";
+
+const nomes = [
+  "Fernando Pimmel",
+  "Fernando Flores",
+  "Gilson Viana",
+  "Isaac Linck",
+  "Lucas Trentin",
+];
 
 export const TelaCreditos = () => {
   const router = useRouter();
+  const { Colors, Spacing, FontSizes } = useTheme();
+
   return (
     <Pressable
       onPress={() => router.back()}
@@ -16,12 +27,19 @@ export const TelaCreditos = () => {
         alignItems: "center",
       }}
     >
-      <ThemedView>
-        <ThemedText>Fernando Pimmel</ThemedText>
-        <ThemedText>Fernando Flores</ThemedText>
-        <ThemedText>Gilson Viana</ThemedText>
-        <ThemedText>Isaac Linck</ThemedText>
-        <ThemedText>Lucas Trentin</ThemedText>
+      <ThemedView
+        style={{
+          gap: FontSizes.medium,
+          padding: Spacing.six,
+          backgroundColor: Colors.lightBackground,
+          borderRadius: Spacing.three,
+        }}
+      >
+        {nomes.map((nome) => (
+          <ThemedText key={nome} style={{ fontSize: FontSizes.medium }}>
+            {nome}
+          </ThemedText>
+        ))}
       </ThemedView>
     </Pressable>
   );

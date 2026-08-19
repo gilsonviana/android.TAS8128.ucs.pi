@@ -12,7 +12,7 @@ import {
 import { useJogoFisica } from "@/contexts/jogoFisica";
 import { type NiveisDificuldadeType, NiveisDificuldade } from "@/types";
 
-export type EstadoJogo = "jogando" | "gameover";
+export type EstadoJogo = "jogando" | "gameover" | "ganhou";
 
 type JogoContexto = {
   nivel: NiveisDificuldadeType;
@@ -43,7 +43,13 @@ export const ContextJogo: React.FC<PropsWithChildren> = ({ children }) => {
 
   useEffect(() => {
     if (estado === "gameover") {
-      router.replace("/modals/perdeu");
+      router.replace("/perdeu");
+      return;
+    }
+
+    if (estado === "ganhou") {
+      router.replace("/ganhou");
+      return;
     }
   }, [estado, router]);
 

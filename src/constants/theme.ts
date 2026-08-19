@@ -5,11 +5,13 @@ const ColorTokens = {
   "off-white": "#D9D9D9",
   "deep-plum": "#1C1530",
   ink: "#231A33",
+  plum: "#2B2140",
 } as const;
 
 export const Colors = {
   text: ColorTokens.white,
   background: ColorTokens["deep-plum"],
+  lightBackground: ColorTokens["plum"],
   backgroundElement: "#212225",
   backgroundSelected: "#2E3135",
   textSecondary: "#B0B4BA",

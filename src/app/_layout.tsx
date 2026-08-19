@@ -23,11 +23,30 @@ export default function TabLayout() {
               <Stack.Screen name="index" />
               <Stack.Screen name="jogo" />
               <Stack.Screen
-                name="modals"
+                name="creditos"
                 options={{
                   headerShown: false,
                   presentation: "transparentModal",
                   animation: "fade",
+                  contentStyle: { backgroundColor: "transparent" },
+                }}
+              />
+              <Stack.Screen
+                name="ganhou"
+                options={{
+                  headerShown: false,
+                  presentation: "transparentModal",
+                  animation: "fade",
+                  contentStyle: { backgroundColor: "transparent" },
+                }}
+              />
+              <Stack.Screen
+                name="perdeu"
+                options={{
+                  headerShown: false,
+                  presentation: "transparentModal",
+                  animation: "fade",
+                  contentStyle: { backgroundColor: "transparent" },
                 }}
               />
             </Stack>

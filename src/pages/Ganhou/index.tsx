@@ -6,9 +6,9 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { useJogo } from "@/contexts/jogo";
 
-export const TelaPerdeu = () => {
+export const TelaGanhou = () => {
   const { Spacing, FontSizes } = useTheme();
-  const { reIniciarJogo } = useJogo();
+  const { reIniciarJogo, aumentaNivelDificuldade } = useJogo();
 
   return (
     <Pressable
@@ -28,12 +28,13 @@ export const TelaPerdeu = () => {
           gap: Spacing.three,
         }}
       >
-        <ThemedText style={{ fontSize: FontSizes.title }}>
-          Não foi dessa vez!
-        </ThemedText>
+        <ThemedText style={{ fontSize: FontSizes.title }}>Ganhou</ThemedText>
         <ThemedButton
-          onPress={() => reIniciarJogo(false)}
-          text="Tentar novamente"
+          onPress={() => {
+            aumentaNivelDificuldade();
+            reIniciarJogo(false);
+          }}
+          text="Continuar"
         />
         <ThemedButton
           onPress={() => reIniciarJogo(true)}
