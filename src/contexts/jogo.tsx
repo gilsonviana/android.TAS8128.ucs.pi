@@ -22,6 +22,7 @@ type JogoContexto = {
   aumentaNivelDificuldade: () => void;
   reIniciarJogo: (inicio: boolean) => void;
   finalizaJogo: () => void;
+  ganhaJogo: () => void;
 };
 
 const JogoContext = createContext<JogoContexto | undefined>(undefined);
@@ -68,6 +69,10 @@ export const ContextJogo: React.FC<PropsWithChildren> = ({ children }) => {
     setEstado("gameover");
   }, []);
 
+  const ganhaJogo = useCallback(() => {
+    setEstado("ganhou");
+  }, []);
+
   const reIniciarJogo = useCallback(
     (inicio = false) => {
       resetFisica(nivel);
@@ -87,9 +92,18 @@ export const ContextJogo: React.FC<PropsWithChildren> = ({ children }) => {
       reinicio,
       aumentaNivelDificuldade,
       reIniciarJogo,
+      ganhaJogo,
       finalizaJogo,
     }),
-    [nivel, obtemNomeNivel, estado, reinicio, reIniciarJogo, finalizaJogo],
+    [
+      nivel,
+      obtemNomeNivel,
+      estado,
+      reinicio,
+      reIniciarJogo,
+      ganhaJogo,
+      finalizaJogo,
+    ],
   );
 
   return <JogoContext.Provider value={value}>{children}</JogoContext.Provider>;

@@ -62,3 +62,14 @@ export const getBolaConfig = (nivel: number) => {
       return BOLA_FACIL;
   }
 };
+
+export const getTotalTijolos = (nivel: number) => {
+  switch (nivel) {
+    case 2:
+      return GRADE_MEDIO.reduce((total, colunas) => total + colunas, 0);
+    case 3:
+      return GRADE_DIFICIL.reduce((total, colunas) => total + colunas, 0);
+    default:
+      return GRADE_FACIL.reduce((total, colunas) => total + colunas, 0);
+  }
+};

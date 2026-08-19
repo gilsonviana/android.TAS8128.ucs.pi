@@ -1,4 +1,8 @@
-import { getBolaConfig, getPaddleConfig } from "@/constants/grade";
+import {
+  getBolaConfig,
+  getPaddleConfig,
+  getTotalTijolos,
+} from "@/constants/grade";
 import { useJogo } from "@/contexts/jogo";
 import { useJogoFisica } from "@/contexts/jogoFisica";
 import { useTheme } from "@/hooks/use-theme";
@@ -11,7 +15,7 @@ import Animated, {
 
 export const Bola: React.FC = () => {
   const { Colors } = useTheme();
-  const { estado, finalizaJogo, nivel } = useJogo();
+  const { estado, finalizaJogo, ganhaJogo, nivel } = useJogo();
   const {
     bolaX,
     bolaY,
@@ -24,6 +28,7 @@ export const Bola: React.FC = () => {
   } = useJogoFisica();
   const bolaConfig = getBolaConfig(nivel);
   const paddleConfig = getPaddleConfig(nivel);
+  const totalTijolos = getTotalTijolos(nivel);
 
   useFrameCallback((frameInfo) => {
     "worklet";
@@ -41,7 +46,11 @@ export const Bola: React.FC = () => {
       return;
     }
 
-    if (estado === "gameover" || (vx === 0 && vy === 0)) {
+    if (
+      estado === "gameover" ||
+      estado === "ganhou" ||
+      (vx === 0 && vy === 0)
+    ) {
       return;
     }
 
@@ -133,6 +142,20 @@ export const Bola: React.FC = () => {
         const copia = [...tijolosAtual];
         copia[i] = { ...t, visivel: false };
         tijolos.value = copia;
+
+        let restam = false;
+        for (let j = 0; j < totalTijolos; j++) {
+          const tijolo = copia[j];
+          if (!tijolo || tijolo.visivel) {
+            restam = true;
+            break;
+          }
+        }
+        if (!restam) {
+          vx = 0;
+          vy = 0;
+          runOnJS(ganhaJogo)();
+        }
 
         if (!sobrepoe) {
           novoX = anteriorX + deslocamentoX * tempoEntrada;
