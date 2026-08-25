@@ -12,3 +12,30 @@ O desenvolvimento foi feito utilizando **Visual Studio Code** como editor de có
 - **Expo Router**: utilizado para a navegação entre as telas do jogo.
 - **React Native Game Engine**: biblioteca utilizada para controlar a lógica e a física do jogo (movimento da bola, colisões, etc).
 
+## Geração do arquivo APK
+
+O arquivo instalável (APK) do jogo pode ser gerado localmente através do Gradle. O processo consiste em:
+
+1. Preparar o projeto nativo:
+
+   ```bash
+   npx expo prebuild --platform android --clean
+   ```
+
+2. Compilar o APK debug:
+
+   ```bash
+   cd android && ./gradlew assembleDebug
+   ```
+
+   O arquivo gerado estará em: `android/app/build/outputs/apk/debug/app-debug.apk`
+
+3. Para um APK de release:
+
+   ```bash
+   cd android && ./gradlew assembleRelease
+   ```
+
+   O arquivo gerado estará em: `android/app/build/outputs/apk/release/app-release.apk`
+
+O APK pode ser instalado diretamente em um aparelho Android ou emulador para testes.
