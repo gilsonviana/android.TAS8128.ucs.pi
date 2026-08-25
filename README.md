@@ -38,24 +38,28 @@ Após clonar o [repositório](https://github.com/gilsonviana/android.TAS8128.ucs
 
 ## Geração do arquivo APK
 
-O arquivo instalável (APK) do jogo é gerado utilizando o serviço **EAS Build**, da própria Expo. O processo consiste em:
+O arquivo instalável (APK) do jogo pode ser gerado localmente através do Gradle. O processo consiste em:
 
-1. Instalar a ferramenta de linha de comando do EAS:
-
-   ```bash
-   npm install -g eas-cli
-   ```
-
-2. Fazer login com uma conta Expo:
+1. Preparar o projeto nativo:
 
    ```bash
-   eas login
+   npx expo prebuild --platform android --clean
    ```
 
-3. Executar o comando de build para Android:
+2. Compilar o APK debug:
 
    ```bash
-   eas build --platform android --profile preview
+   cd android && ./gradlew assembleDebug
    ```
 
-Esse comando compila o projeto nos servidores da Expo e gera um arquivo `.apk`, que pode ser baixado e instalado diretamente em um aparelho Android para testes, sem a necessidade de publicá-lo em uma loja de aplicativos.
+   O arquivo gerado estará em: `android/app/build/outputs/apk/debug/app-debug.apk`
+
+3. Para um APK de release:
+
+   ```bash
+   cd android && ./gradlew assembleRelease
+   ```
+
+   O arquivo gerado estará em: `android/app/build/outputs/apk/release/app-release.apk`
+
+O APK pode ser instalado diretamente em um aparelho Android ou emulador para testes.
