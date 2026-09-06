@@ -14,18 +14,18 @@ export const PADDLE_DIFICIL = {
 };
 
 export const BOLA_FACIL = {
-  RAIO: 8,
+  RAIO: 9,
   VELOCIDADE_INICIAL: 200,
 };
 
 export const BOLA_MEDIO = {
   RAIO: 8,
-  VELOCIDADE_INICIAL: 280,
+  VELOCIDADE_INICIAL: 350,
 };
 
 export const BOLA_DIFICIL = {
   RAIO: 7,
-  VELOCIDADE_INICIAL: 360,
+  VELOCIDADE_INICIAL: 580,
 };
 
 export const GRADE_LAYOUT = {

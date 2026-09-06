@@ -27,59 +27,36 @@ export const Bola: React.FC = () => {
 
   useFrameCallback((frameInfo) => {
     "worklet";
-    const dt = (frameInfo.timeSincePreviousFrame ?? 16) / 1000;
-    const raio = bolaConfig.RAIO;
-    const anteriorX = bolaX.value;
-    const anteriorY = bolaY.value;
-
-    let novoX = anteriorX + velocidadeX.value * dt;
-    let novoY = anteriorY + velocidadeY.value * dt;
-    let vx = velocidadeX.value;
-    let vy = velocidadeY.value;
-
     if (areaLargura.value === 0 || areaAltura.value === 0) {
       return;
     }
+
+    let vx = velocidadeX.value;
+    let vy = velocidadeY.value;
 
     if (estado === "gameover" || (vx === 0 && vy === 0)) {
       return;
     }
 
-    if (novoX - raio < 0) {
-      novoX = raio;
-      vx = -vx;
-    } else if (novoX + raio > areaLargura.value) {
-      novoX = areaLargura.value - raio;
-      vx = -vx;
-    }
+    // Teto no dt: sem ele, um engasgo do JS produz um passo de centenas de px.
+    const dt = Math.min((frameInfo.timeSincePreviousFrame ?? 16) / 1000, 1 / 30);
+    const raio = bolaConfig.RAIO;
+    const anteriorX = bolaX.value;
+    const anteriorY = bolaY.value;
 
-    if (novoY - raio < 0) {
-      novoY = raio;
-      vy = -vy;
-    }
-
-    const paddleY = areaAltura.value - paddleConfig.ALTURA;
-    const dentroPaddleX =
-      novoX + raio > paddleX.value - paddleConfig.LARGURA / 2 &&
-      novoX - raio < paddleX.value + paddleConfig.LARGURA / 2;
-
-    if (
-      vy > 0 &&
-      novoY + raio >= paddleY &&
-      novoY - raio <= paddleY &&
-      dentroPaddleX
-    ) {
-      novoY = paddleY - raio;
-      vy = -vy;
-    }
-
-    if (novoY - raio > areaAltura.value) {
-      vx = 0;
-      vy = 0;
-      runOnJS(finalizaJogo)();
-    }
+    // Trajeto real do frame. A varredura de tijolos abaixo só é correta se este
+    // segmento não for alterado pelos clamps de parede/raquete, por isso ela
+    // roda antes deles.
+    const deslocamentoX = vx * dt;
+    const deslocamentoY = vy * dt;
+    let novoX = anteriorX + deslocamentoX;
+    let novoY = anteriorY + deslocamentoY;
 
     const tijolosAtual = tijolos.value;
+    let melhorIndice = -1;
+    let melhorTempo = Infinity;
+    let melhorEixoX = false;
+
     for (let i = 0; i < tijolosAtual.length; i++) {
       const t = tijolosAtual[i];
       if (!t || !t.visivel) continue;
@@ -88,13 +65,6 @@ export const Bola: React.FC = () => {
       const limiteDireito = t.x + t.largura + raio;
       const limiteSuperior = t.y - raio;
       const limiteInferior = t.y + t.altura + raio;
-      const deslocamentoX = novoX - anteriorX;
-      const deslocamentoY = novoY - anteriorY;
-      const sobrepoe =
-        novoX >= limiteEsquerdo &&
-        novoX <= limiteDireito &&
-        novoY >= limiteSuperior &&
-        novoY <= limiteInferior;
 
       let entradaX = -Infinity;
       let saidaX = Infinity;
@@ -125,27 +95,79 @@ export const Bola: React.FC = () => {
 
       const tempoEntrada = Math.max(entradaX, entradaY);
       const tempoSaida = Math.min(saidaX, saidaY);
-      const colide =
-        sobrepoe ||
-        (tempoEntrada <= tempoSaida && tempoEntrada <= 1 && tempoSaida >= 0);
 
-      if (colide) {
-        const copia = [...tijolosAtual];
-        copia[i] = { ...t, visivel: false };
-        tijolos.value = copia;
-
-        if (!sobrepoe) {
-          novoX = anteriorX + deslocamentoX * tempoEntrada;
-          novoY = anteriorY + deslocamentoY * tempoEntrada;
-        }
-
-        if (entradaX > entradaY) {
-          vx = -vx;
-        } else {
-          vy = -vy;
-        }
-        break;
+      if (tempoEntrada > tempoSaida || tempoEntrada > 1 || tempoSaida < 0) {
+        continue;
       }
+
+      // Guarda o primeiro contato no tempo, não o de menor índice no array.
+      if (tempoEntrada < melhorTempo) {
+        melhorTempo = tempoEntrada;
+        melhorIndice = i;
+        melhorEixoX = entradaX > entradaY;
+      }
+    }
+
+    if (melhorIndice >= 0) {
+      const alvo = melhorIndice;
+      tijolos.modify((lista) => {
+        "worklet";
+        const copia = [...lista];
+        const t = copia[alvo];
+        if (t) {
+          copia[alvo] = { ...t, visivel: false };
+        }
+        return copia;
+      });
+
+      // Recua até o ponto de contato. Se a bola já começou o frame dentro do
+      // tijolo (tempo negativo), mantém a posição integrada e só inverte.
+      if (melhorTempo >= 0) {
+        novoX = anteriorX + deslocamentoX * melhorTempo;
+        novoY = anteriorY + deslocamentoY * melhorTempo;
+      }
+
+      if (melhorEixoX) {
+        vx = -vx;
+      } else {
+        vy = -vy;
+      }
+    }
+
+    // Clamps usam atribuição direcional para que uma inversão no tijolo acima
+    // não seja desfeita por uma segunda inversão na parede no mesmo frame.
+    if (novoX - raio < 0) {
+      novoX = raio;
+      vx = Math.abs(vx);
+    } else if (novoX + raio > areaLargura.value) {
+      novoX = areaLargura.value - raio;
+      vx = -Math.abs(vx);
+    }
+
+    if (novoY - raio < 0) {
+      novoY = raio;
+      vy = Math.abs(vy);
+    }
+
+    const paddleY = areaAltura.value - paddleConfig.ALTURA;
+    const dentroPaddleX =
+      novoX + raio > paddleX.value - paddleConfig.LARGURA / 2 &&
+      novoX - raio < paddleX.value + paddleConfig.LARGURA / 2;
+
+    if (
+      vy > 0 &&
+      novoY + raio >= paddleY &&
+      novoY - raio <= paddleY &&
+      dentroPaddleX
+    ) {
+      novoY = paddleY - raio;
+      vy = -Math.abs(vy);
+    }
+
+    if (novoY - raio > areaAltura.value) {
+      vx = 0;
+      vy = 0;
+      runOnJS(finalizaJogo)();
     }
 
     bolaX.value = novoX;

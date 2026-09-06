@@ -44,6 +44,7 @@ export const TelaInicial = () => {
           style={{
             fontSize: FontSizes.title,
             textAlign: "center",
+            lineHeight: FontSizes.title * 1.2,
           }}
         >
           Bem-vindo ao Quebra Tijolos

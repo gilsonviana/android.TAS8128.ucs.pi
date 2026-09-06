@@ -22,7 +22,6 @@ export const TelaJogo = () => {
     paddleX,
     areaLargura,
     areaAltura,
-    tijolos,
     paddleMovement,
   } = useJogoFisica();
 
@@ -53,7 +52,6 @@ export const TelaJogo = () => {
       velocidadeX.value = bolaConfig.VELOCIDADE_INICIAL * 0.6;
       velocidadeY.value = -bolaConfig.VELOCIDADE_INICIAL;
       paddleX.value = width / 2;
-      tijolos.value = [];
     }
   };
 
