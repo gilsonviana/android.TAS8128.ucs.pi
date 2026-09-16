@@ -63,3 +63,7 @@ O arquivo instalável (APK) do jogo pode ser gerado localmente através do Gradl
    O arquivo gerado estará em: `android/app/build/outputs/apk/release/app-release.apk`
 
 O APK pode ser instalado diretamente em um aparelho Android ou emulador para testes.
+
+```
+🎓 Observação: Para fins de testes e validação o arquivo APK gerado pode ser encontrado na pasta /dist
+```
